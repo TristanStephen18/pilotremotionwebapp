@@ -1,0 +1,3 @@
+Palitan mo yung story sa may data folder sa src. Yung sa sampleredditstory variable kung want mo. 
+Next eh run mo tong command: npx ts scripts/fetchRedditStory.ts 
+Tapos irender mo na. Yon lang kung want mo palitan yung background vid palitan mo lang madami naman sa public/videos folder ko

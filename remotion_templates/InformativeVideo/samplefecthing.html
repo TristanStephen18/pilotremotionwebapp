@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      fetch(
+        "https://www.reddit.com/r/OffMyChestPH/comments/1mqy8s9/my_best_friend_ghosted_me_after_i_paid_for_her/.json",
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          const title = data[0]?.data?.children[0]?.data?.selftext;
+          console.log("Title:", title);
+        })
+        .catch((err) => console.error(err));
+    </script>
+  </body>
+</html>

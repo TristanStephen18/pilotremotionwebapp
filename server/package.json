@@ -1,0 +1,35 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@remotion/bundler": "^4.0.339",
+    "@remotion/renderer": "^4.0.339",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "elevenlabs": "^1.59.0",
+    "get-audio-duration": "^4.0.1",
+    "multer": "^2.0.2",
+    "nodemon": "^3.1.10",
+    "remotion": "^4.0.339",
+    "stream": "^0.0.3"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^24.3.0",
+    "express": "^5.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  }
+}
