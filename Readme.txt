@@ -1,6 +1,7 @@
 Follow this steps to run the web application:
 
 1. open a terminal and execute these commands:
+- npm i
 - cd server
 - npm start
 
