@@ -7,6 +7,8 @@ import VideoPreview from "../components/preview/VideoPreview";
 import type { BackgroundType } from "../remotion/type";
 import type { VoiceId } from "../data/voices";
 
+type StatusType = "success" | "error" | "info" | null;
+
 export default function RedditVideoPage() {
   const [redditUrl, setRedditUrl] = useState("");
   const [bg, setBg] = useState<{ type: BackgroundType; value: string }>({
@@ -20,53 +22,66 @@ export default function RedditVideoPage() {
   const [isRendering, setIsRendering] = useState(false);
   const [extracting, setExtracting] = useState(false);
   const [story, setStory] = useState("");
+  const [postTitle, setPostTitle] = useState("");
+  const [postText, setPostText] = useState("");
   const [videoUrl, setVideoUrl] = useState<string | undefined>(undefined);
+  const [status, setStatus] = useState<{ type: StatusType; message: string }>({
+    type: null,
+    message: "",
+  });
 
   const extractRedditPost = async (url: string) => {
     try {
       setExtracting(true);
       setStory("");
+      setPostTitle("");
+      setPostText("");
       setVideoUrl("");
+      setStatus({ type: "info", message: "Extracting Reddit post..." });
 
-      // Strip query parameters
-      const cleanUrl = url.split("?")[0];
-
-      // Append .json
-      const jsonUrl = cleanUrl.endsWith(".json")
-        ? cleanUrl
-        : cleanUrl + ".json";
-
-      const res = await fetch(jsonUrl);
+      const res = await fetch(
+        `http://localhost:5000/api/reddit?url=${encodeURIComponent(url)}`
+      );
       const data = await res.json();
 
       const post = data[0]?.data?.children[0]?.data;
-      const postTitle = post?.title?.trim() || "";
-      const postText = post?.selftext?.trim() || "";
+      const title = post?.title?.trim() || "";
+      const text = post?.selftext?.trim() || "";
 
-      // Decide separator
-      const endsWithPunctuation = /[.!?]$/.test(postTitle);
+      if (!title && !text) {
+        throw new Error("Empty post data");
+      }
+
+      setPostTitle(title);
+      setPostText(text);
+
+      const endsWithPunctuation = /[.!?]$/.test(title);
       const separator = endsWithPunctuation ? "" : ".";
-
-      const combined = `${postTitle}${separator} ${postText}`;
-
+      const combined = `${title}${separator} ${text}`;
       setStory(combined);
       setExtracting(false);
 
       console.log(combined);
 
-      return combined; // Return combined content
+      setStatus({
+        type: "success",
+        message: "✓ Post extracted successfully!",
+      });
+
+      return combined;
     } catch (err) {
       console.error(err);
-      alert("Failed to extract Reddit post. Check the URL.");
       setExtracting(false);
+      setStatus({
+        type: "error",
+        message: "❌ Failed to extract Reddit post. Please check the URL.",
+      });
       return "";
     }
   };
 
   const handleUrlChange = async (url: string) => {
     setRedditUrl(url);
-
-    // Auto-extract when URL is valid and complete
     if (url && isValidRedditUrl(url)) {
       await extractRedditPost(url);
     }
@@ -86,16 +101,17 @@ export default function RedditVideoPage() {
 
   const handleGenerate = async () => {
     if (!story && redditUrl) {
-      // If we don't have story yet but have a URL, extract first
       const extractedStory = await extractRedditPost(redditUrl);
       if (!extractedStory) {
-        alert("No story content found. Please check the Reddit URL.");
         return;
       }
     }
 
     if (!story) {
-      alert("Please provide a valid Reddit URL with story content.");
+      setStatus({
+        type: "error",
+        message: "❌ Please provide a valid Reddit URL with story content.",
+      });
       return;
     }
 
@@ -103,7 +119,6 @@ export default function RedditVideoPage() {
     setVideoUrl(undefined);
 
     try {
-      // Call the backend to generate video using the extracted Reddit story
       const res = await fetch("http://localhost:5000/generate-video", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -117,13 +132,16 @@ export default function RedditVideoPage() {
 
       const data = await res.json();
       if (data.url) {
-        setVideoUrl(data.url); // Set the generated video URL
+        setVideoUrl(data.url);
       } else {
         throw new Error("No video URL returned from server");
       }
     } catch (err) {
       console.error("Error generating video:", err);
-      alert("Failed to generate video. Please try again.");
+      setStatus({
+        type: "error",
+        message: "❌ Failed to generate video. Please try again.",
+      });
     } finally {
       setIsRendering(false);
     }
@@ -135,6 +153,21 @@ export default function RedditVideoPage() {
       subtitle="Paste a Reddit post URL and configure your video."
       left={
         <div className="space-y-5">
+          {/* Notification Banner */}
+          {status.type && (
+            <div
+              className={`p-2 rounded-md text-sm ${
+                status.type === "success"
+                  ? "bg-green-100 text-green-800"
+                  : status.type === "error"
+                  ? "bg-red-100 text-red-800"
+                  : "bg-blue-100 text-blue-800"
+              }`}
+            >
+              {status.message}
+            </div>
+          )}
+
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
               Reddit Post URL
@@ -150,17 +183,17 @@ export default function RedditVideoPage() {
               We'll fetch the post text automatically when you paste a valid
               URL.
             </p>
-            {extracting && (
-              <p className="text-xs text-blue-500">
-                Extracting post content...
-              </p>
-            )}
-            {story && !extracting && (
-              <p className="text-xs text-green-500">
-                ✓ Post content loaded ({story.length} characters)
-              </p>
-            )}
           </div>
+
+          {/* Post Displayer */}
+          {story && (
+            <div className="border rounded-md p-3 bg-gray-50 shadow-sm">
+              <h3 className="font-semibold text-gray-800 mb-2">{postTitle}</h3>
+              <p className="text-sm text-gray-700 whitespace-pre-line">
+                {postText || "(No body text)"}
+              </p>
+            </div>
+          )}
 
           <BackgroundSelector value={bg} onChange={setBg} />
           <VoiceSelector value={voice} onChange={setVoice} />

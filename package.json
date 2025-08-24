@@ -16,6 +16,7 @@
   "dependencies": {
     "@remotion/google-fonts": "^4.0.340",
     "dotenv": "^17.2.1",
-    "elevenlabs": "^1.59.0"
+    "elevenlabs": "^1.59.0",
+    "node-fetch": "^3.3.2"
   }
 }

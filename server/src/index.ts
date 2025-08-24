@@ -83,10 +83,23 @@ async function setStoryTellingAssets(
   const duration = await getAudioDurationInSeconds(audioPath);
   console.log(`⏱️ Duration: ${duration.toFixed(2)} seconds`);
 
-  fs.writeFileSync(
-    path.join(dataDir, "script.json"),
-    JSON.stringify({ story, duration }, null, 2)
-  );
+  console.log("🔗 Performing forced alignment...");
+  const alignment = await elevenLabs.forcedAlignment.create({
+    file: fs.createReadStream(audioPath),
+    text: story,
+  });
+  console.log("✅ Alignment received");
+
+  // Keep only word-level timestamps:
+  const words = alignment.words.map((w) => ({
+    word: w.text,
+    start: w.start,
+    end: w.end,
+  }));
+
+  const output = { story, duration, words };
+  fs.writeFileSync(path.join(dataDir, "script.json"), JSON.stringify(output, null, 2));
+  console.log("✅ script.json updated with duration & word timestamps");
 
   fs.writeFileSync(
     path.join(dataDir, "background.json"),
@@ -144,16 +157,13 @@ app.post("/generate-video", async (req, res) => {
 
     console.log("📩 Received request with story:", story);
 
-    // Generate voiceover audio
     await setStoryTellingAssets(story, voiceId, templatename, backgroundSrc);
 
-    // Locate Remotion entry
     const entry = path.join(__dirname, `../../remotion_templates/${templatename}/src/index.ts`);
     console.log("📂 Bundling Remotion project from:", entry);
 
     const bundleLocation = await bundle(entry);
 
-    // Load compositions
     const comps = await getCompositions(bundleLocation, {
       inputProps: { story },
     });
@@ -167,20 +177,15 @@ app.post("/generate-video", async (req, res) => {
       console.error("❌ Composition 'RedditNarration' not found!");
       return res.status(404).json({ error: "Composition not found" });
     }
-
-    // Load script.json for story + duration
     const scriptData = JSON.parse(
       fs.readFileSync(
         path.join(__dirname, `../../remotion_templates/${templatename}/data/script.json`),
         "utf-8"
       )
     );
-
-    // Normalize backgroundSrc (remove leading slash if any)
     const normalizedBackgroundSrc = backgroundSrc?.replace(/^\/+/, "");
     console.log("📂 Normalized background source:", normalizedBackgroundSrc);
 
-    // 🔑 Simplified inputProps
     const inputProps = {
       story: scriptData.story,
       voiceoverPath: staticFile("audios/voice.mp3"),
@@ -285,6 +290,34 @@ app.post(
     }
   }
 );
+
+app.get("/api/reddit", async (req, res) => {
+  try {
+    const { url } = req.query;
+    if (!url || typeof url !== "string") {
+      return res.status(400).json({ error: "Missing url query param" });
+    }
+
+    const cleanUrl = url.split("?")[0];
+    const jsonUrl = cleanUrl.endsWith(".json") ? cleanUrl : cleanUrl + ".json";
+
+    const redditRes = await fetch(jsonUrl, {
+      headers: { "User-Agent": "RedditVideoApp/1.0" }, // Reddit requires UA
+    });
+
+    if (!redditRes.ok) {
+      return res.status(redditRes.status).json({ error: "Failed to fetch Reddit" });
+    }
+
+    const data = await redditRes.json();
+    console.log("Fetched Reddit data for URL:", url);
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error fetching Reddit" });
+  }
+});
+
 
 app.use(express.static(__dirname));
 

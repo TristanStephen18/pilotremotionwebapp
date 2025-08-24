@@ -11,5 +11,4 @@ Follow this steps to run the web application:
 - npm run dev
 if terminal says 'vite'is not recognized 
 - npm i -g vite or npm i vite,then run again
-
-3. Pls lang wag ibash, pls lang
+- Ctrl + click the link to open the web application

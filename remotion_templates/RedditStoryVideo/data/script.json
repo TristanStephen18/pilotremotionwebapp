@@ -1,4 +1,211 @@
 {
-  "story": "Gigil ako sa dalawang to. sana all baliw",
-  "duration": 2.951812
+  "story": "Gigil ako ko. This girl is posting beauty products but nag po post siya ng after na naka filter and remini",
+  "duration": 6.582813,
+  "words": [
+    {
+      "word": "Gigil",
+      "start": 0.219,
+      "end": 0.5
+    },
+    {
+      "word": " ",
+      "start": 0.5,
+      "end": 0.519
+    },
+    {
+      "word": "ako",
+      "start": 0.519,
+      "end": 0.699
+    },
+    {
+      "word": " ",
+      "start": 0.699,
+      "end": 0.719
+    },
+    {
+      "word": "ko.",
+      "start": 0.719,
+      "end": 0.919
+    },
+    {
+      "word": " ",
+      "start": 0.919,
+      "end": 1.379
+    },
+    {
+      "word": "This",
+      "start": 1.379,
+      "end": 1.539
+    },
+    {
+      "word": " ",
+      "start": 1.539,
+      "end": 1.579
+    },
+    {
+      "word": "girl",
+      "start": 1.579,
+      "end": 1.799
+    },
+    {
+      "word": " ",
+      "start": 1.799,
+      "end": 1.86
+    },
+    {
+      "word": "is",
+      "start": 1.86,
+      "end": 2
+    },
+    {
+      "word": " ",
+      "start": 2,
+      "end": 2.039
+    },
+    {
+      "word": "posting",
+      "start": 2.039,
+      "end": 2.439
+    },
+    {
+      "word": " ",
+      "start": 2.439,
+      "end": 2.48
+    },
+    {
+      "word": "beauty",
+      "start": 2.48,
+      "end": 2.7
+    },
+    {
+      "word": " ",
+      "start": 2.7,
+      "end": 2.779
+    },
+    {
+      "word": "products",
+      "start": 2.779,
+      "end": 3.299
+    },
+    {
+      "word": " ",
+      "start": 3.299,
+      "end": 3.319
+    },
+    {
+      "word": "but",
+      "start": 3.319,
+      "end": 3.439
+    },
+    {
+      "word": " ",
+      "start": 3.439,
+      "end": 3.46
+    },
+    {
+      "word": "nag",
+      "start": 3.46,
+      "end": 3.639
+    },
+    {
+      "word": " ",
+      "start": 3.639,
+      "end": 3.659
+    },
+    {
+      "word": "po",
+      "start": 3.659,
+      "end": 3.819
+    },
+    {
+      "word": " ",
+      "start": 3.819,
+      "end": 3.859
+    },
+    {
+      "word": "post",
+      "start": 3.859,
+      "end": 4.079
+    },
+    {
+      "word": " ",
+      "start": 4.079,
+      "end": 4.119
+    },
+    {
+      "word": "siya",
+      "start": 4.119,
+      "end": 4.239
+    },
+    {
+      "word": " ",
+      "start": 4.239,
+      "end": 4.279
+    },
+    {
+      "word": "ng",
+      "start": 4.279,
+      "end": 4.44
+    },
+    {
+      "word": " ",
+      "start": 4.44,
+      "end": 4.519
+    },
+    {
+      "word": "after",
+      "start": 4.519,
+      "end": 4.779
+    },
+    {
+      "word": " ",
+      "start": 4.779,
+      "end": 4.819
+    },
+    {
+      "word": "na",
+      "start": 4.819,
+      "end": 4.9
+    },
+    {
+      "word": " ",
+      "start": 4.9,
+      "end": 4.94
+    },
+    {
+      "word": "naka",
+      "start": 4.94,
+      "end": 5.099
+    },
+    {
+      "word": " ",
+      "start": 5.099,
+      "end": 5.199
+    },
+    {
+      "word": "filter",
+      "start": 5.199,
+      "end": 5.619
+    },
+    {
+      "word": " ",
+      "start": 5.619,
+      "end": 5.639
+    },
+    {
+      "word": "and",
+      "start": 5.639,
+      "end": 5.739
+    },
+    {
+      "word": " ",
+      "start": 5.739,
+      "end": 5.799
+    },
+    {
+      "word": "remini",
+      "start": 5.799,
+      "end": 6.559
+    }
+  ]
 }
