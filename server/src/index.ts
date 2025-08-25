@@ -17,7 +17,10 @@ dotenv.config();
 
 const app = express();
 
-const uploadDir = path.join(__dirname, "../../remotion_templates/QuoteTemplate/public/images");
+const uploadDir = path.join(
+  __dirname,
+  "../../remotion_templates/QuoteTemplate/public/images"
+);
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -67,7 +70,12 @@ async function setStoryTellingAssets(
 
   const buffer = await streamToBuffer(audioStream as Readable);
 
-  const remotionRoot = path.join(process.cwd(), "..", "remotion_templates", templatename);
+  const remotionRoot = path.join(
+    process.cwd(),
+    "..",
+    "remotion_templates",
+    templatename
+  );
 
   const dataDir = path.join(remotionRoot, "data");
   if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
@@ -78,7 +86,9 @@ async function setStoryTellingAssets(
   const audioPath = path.join(audioDir, "voice.mp3");
 
   fs.writeFileSync(audioPath, buffer);
-  console.log(`✅ Voiceover saved to remotion_templates/${templatename}/public/audios/voice.mp3`);
+  console.log(
+    `✅ Voiceover saved to remotion_templates/${templatename}/public/audios/voice.mp3`
+  );
 
   const duration = await getAudioDurationInSeconds(audioPath);
   console.log(`⏱️ Duration: ${duration.toFixed(2)} seconds`);
@@ -98,12 +108,93 @@ async function setStoryTellingAssets(
   }));
 
   const output = { story, duration, words };
-  fs.writeFileSync(path.join(dataDir, "script.json"), JSON.stringify(output, null, 2));
+  fs.writeFileSync(
+    path.join(dataDir, "script.json"),
+    JSON.stringify(output, null, 2)
+  );
   console.log("✅ script.json updated with duration & word timestamps");
 
   fs.writeFileSync(
     path.join(dataDir, "background.json"),
     JSON.stringify({ backgroundSrc }, null, 2)
+  );
+
+  console.log("✅ script.json updated with duration");
+}
+
+async function setRedditVideoAssets(
+  story: string,
+  voiceId: string,
+  templatename: string,
+  backgroundSrc: string,
+  title: string,
+  text: string
+) {
+  console.log("🎤 Generating voiceover...");
+
+  const audioStream = await elevenLabs.generate({
+    voice: voiceId,
+    model_id: "eleven_multilingual_v2",
+    text: story,
+  });
+
+  const buffer = await streamToBuffer(audioStream as Readable);
+
+  const remotionRoot = path.join(
+    process.cwd(),
+    "..",
+    "remotion_templates",
+    templatename
+  );
+
+  const dataDir = path.join(remotionRoot, "data");
+  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+
+  const audioDir = path.join(remotionRoot, "public", "audios");
+  if (!fs.existsSync(audioDir)) fs.mkdirSync(audioDir, { recursive: true });
+
+  const audioPath = path.join(audioDir, "voice.mp3");
+
+  fs.writeFileSync(audioPath, buffer);
+  console.log(
+    `✅ Voiceover saved to remotion_templates/${templatename}/public/audios/voice.mp3`
+  );
+
+  const duration = await getAudioDurationInSeconds(audioPath);
+  console.log(`⏱️ Duration: ${duration.toFixed(2)} seconds`);
+
+  console.log("🔗 Performing forced alignment...");
+  const alignment = await elevenLabs.forcedAlignment.create({
+    file: fs.createReadStream(audioPath),
+    text: story,
+  });
+  console.log("✅ Alignment received");
+
+  // Keep only word-level timestamps:
+  const words = alignment.words.map((w) => ({
+    word: w.text,
+    start: w.start,
+    end: w.end,
+  }));
+
+  console.log("Post Text and title:", title, text);
+
+  const output = { story, duration, words, title, text };
+  // console.log(JSON.stringify(output, null, 2));
+  fs.writeFileSync(
+    path.join(dataDir, "script.json"),
+    JSON.stringify(output, null, 2)
+  );
+  console.log(
+    "✅ script.json updated with duration, text, title & word timestamps for Reddit"
+  );
+
+  const normalizedBackgroundSrc = backgroundSrc?.replace(/^\/+/, "");
+  console.log("📂 Normalized background source:", normalizedBackgroundSrc);
+
+  fs.writeFileSync(
+    path.join(dataDir, "background.json"),
+    JSON.stringify({ backgroundSrc: normalizedBackgroundSrc }, null, 2)
   );
 
   console.log("✅ script.json updated with duration");
@@ -148,18 +239,16 @@ app.post("/api/trivia", async (req, res) => {
 
 app.post("/generate-video", async (req, res) => {
   try {
-    const {
-      story,
-      voiceId = "CwhRBWXzGAHq8TQ4Fs17",
-      templatename = "RedditStoryVideo",
-      backgroundSrc,
-    } = req.body;
+    const { story, voiceId, templatename, backgroundSrc } = req.body;
 
     console.log("📩 Received request with story:", story);
 
     await setStoryTellingAssets(story, voiceId, templatename, backgroundSrc);
 
-    const entry = path.join(__dirname, `../../remotion_templates/${templatename}/src/index.ts`);
+    const entry = path.join(
+      __dirname,
+      `../../remotion_templates/${templatename}/src/index.ts`
+    );
     console.log("📂 Bundling Remotion project from:", entry);
 
     const bundleLocation = await bundle(entry);
@@ -179,7 +268,93 @@ app.post("/generate-video", async (req, res) => {
     }
     const scriptData = JSON.parse(
       fs.readFileSync(
-        path.join(__dirname, `../../remotion_templates/${templatename}/data/script.json`),
+        path.join(
+          __dirname,
+          `../../remotion_templates/${templatename}/data/script.json`
+        ),
+        "utf-8"
+      )
+    );
+    const normalizedBackgroundSrc = backgroundSrc?.replace(/^\/+/, "");
+    console.log("📂 Normalized background source:", normalizedBackgroundSrc);
+
+    const inputProps = {
+      story: scriptData.story,
+      voiceoverPath: staticFile("audios/voice.mp3"),
+      duration: scriptData.duration,
+      backgroundVideo: normalizedBackgroundSrc,
+    };
+
+    console.log("📁 Final inputProps for Remotion:", inputProps);
+
+    // Render output video
+    const outputFile = `out-${Date.now()}.mp4`;
+    const outputLocation = path.join(__dirname, "generatedvideos", outputFile);
+
+    console.log("🎬 Rendering video to:", outputLocation);
+
+    await renderMedia({
+      serveUrl: bundleLocation,
+      composition: comp,
+      codec: "h264",
+      outputLocation,
+      inputProps,
+    });
+
+    console.log("✅ Render complete!");
+
+    return res.json({
+      url: `http://localhost:5000/generatedvideos/${outputFile}`,
+    });
+  } catch (err: any) {
+    console.error("❌ Internal error while generating video:", err);
+    return res.status(500).json({ error: err.message || "Unknown error" });
+  }
+});
+
+app.post("/generate-reddit-video", async (req, res) => {
+  try {
+    const { story, voiceId, templatename, backgroundSrc, title, text } =
+      req.body;
+
+    console.log("📩 Received request with story:", story);
+
+    await setRedditVideoAssets(
+      story,
+      voiceId,
+      templatename,
+      backgroundSrc,
+      title,
+      text
+    );
+
+    const entry = path.join(
+      __dirname,
+      `../../remotion_templates/${templatename}/src/index.ts`
+    );
+    console.log("📂 Bundling Remotion project from:", entry);
+
+    const bundleLocation = await bundle(entry);
+
+    const comps = await getCompositions(bundleLocation, {
+      inputProps: { story },
+    });
+    console.log(
+      "📑 Found compositions:",
+      comps.map((c) => c.id)
+    );
+
+    const comp = comps.find((c) => c.id === "RedditNarration");
+    if (!comp) {
+      console.error("❌ Composition 'RedditNarration' not found!");
+      return res.status(404).json({ error: "Composition not found" });
+    }
+    const scriptData = JSON.parse(
+      fs.readFileSync(
+        path.join(
+          __dirname,
+          `../../remotion_templates/${templatename}/data/script.json`
+        ),
         "utf-8"
       )
     );
@@ -226,7 +401,12 @@ async function setJsonQuotesData(
   author: string,
   backgroundimage: string
 ) {
-  const remotionRoot = path.join(process.cwd(), "..", "remotion_templates","QuoteTemplate");
+  const remotionRoot = path.join(
+    process.cwd(),
+    "..",
+    "remotion_templates",
+    "QuoteTemplate"
+  );
 
   const dataDir = path.join(remotionRoot, "data");
   if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
@@ -255,7 +435,10 @@ app.post(
 
       await setJsonQuotesData(quote, author, `images/${bgFile}`);
 
-      const entry = path.join(__dirname, `../../remotion_templates/QuoteTemplate/src/index.ts`);
+      const entry = path.join(
+        __dirname,
+        `../../remotion_templates/QuoteTemplate/src/index.ts`
+      );
       const bundleLocation = await bundle(entry);
 
       const comps = await getCompositions(bundleLocation);
@@ -306,8 +489,12 @@ app.get("/api/reddit", async (req, res) => {
     });
 
     if (!redditRes.ok) {
-      return res.status(redditRes.status).json({ error: "Failed to fetch Reddit" });
+      return res
+        .status(redditRes.status)
+        .json({ error: "Failed to fetch Reddit" });
     }
+
+    console.log("Fetching Reddit data for URL:", url);
 
     const data = await redditRes.json();
     console.log("Fetched Reddit data for URL:", url);
@@ -317,7 +504,6 @@ app.get("/api/reddit", async (req, res) => {
     res.status(500).json({ error: "Server error fetching Reddit" });
   }
 });
-
 
 app.use(express.static(__dirname));
 

@@ -22,6 +22,8 @@ export default function RedditVideoPage() {
   const [isRendering, setIsRendering] = useState(false);
   const [extracting, setExtracting] = useState(false);
   const [story, setStory] = useState("");
+  // const [title, setTitle] = useState("");
+  // const [text, setText] = useState("");
   const [postTitle, setPostTitle] = useState("");
   const [postText, setPostText] = useState("");
   const [videoUrl, setVideoUrl] = useState<string | undefined>(undefined);
@@ -119,7 +121,8 @@ export default function RedditVideoPage() {
     setVideoUrl(undefined);
 
     try {
-      const res = await fetch("http://localhost:5000/generate-video", {
+      console.log(postText, postTitle);
+      const res = await fetch("http://localhost:5000/generate-reddit-video", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -127,6 +130,8 @@ export default function RedditVideoPage() {
           voiceId: voice,
           templatename: "RedditStoryVideo",
           backgroundSrc: bg.value,
+          title: postTitle,
+          text: postText,
         }),
       });
 

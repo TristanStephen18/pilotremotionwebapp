@@ -5,22 +5,29 @@ import {
   staticFile,
   useVideoConfig,
   useCurrentFrame,
+  Sequence,
 } from "remotion";
+// ❌ removed script import as per request
 import script from "../data/script.json";
+import backgroundVideo from "../data/background.json";
 
-export const MyVideo: React.FC<{backgroundVideo: string}> = ({backgroundVideo}) => {
+export const MyVideo: React.FC = () => {
   const { fps } = useVideoConfig();
-  const { words } = script as {
-    story: string;
+  const { title, text, words } = script as {
+    title: string;
+    text: string;
     duration: number;
     words: { word: string; start: number; end: number }[];
   };
+  const bg = backgroundVideo as { backgroundSrc: string };
+
+  const introDuration = 2 * fps; 
 
   return (
     <AbsoluteFill>
       {/* Background looping video */}
       <Video
-        src={staticFile(backgroundVideo)}
+        src={staticFile(backgroundVideo.backgroundSrc)}
         muted
         style={{
           position: "absolute",
@@ -29,19 +36,104 @@ export const MyVideo: React.FC<{backgroundVideo: string}> = ({backgroundVideo}) 
           objectFit: "cover",
         }}
       />
-
-      {/* Dark overlay */}
       <AbsoluteFill style={{ backgroundColor: "rgba(0,0,0,0.6)" }} />
 
-      {/* Sentence display */}
-      <SentenceBuilder words={words} fps={fps} />
+      <Sequence from={0} durationInFrames={introDuration}>
+        <RedditPost title={title} text={text} />
+      </Sequence>
 
-      {/* Voiceover audio */}
-      <Audio src={staticFile("audios/voice.mp3")} />
+      <Sequence from={introDuration}>
+        <SentenceBuilder words={words} fps={fps} />
+        <Audio src={staticFile("audios/voice.mp3")} />
+      </Sequence>
     </AbsoluteFill>
   );
 };
 
+const RedditPost: React.FC<{ title: string; text: string }> = ({
+  title,
+  text,
+}) => {
+  return (
+    <AbsoluteFill
+      style={{
+        justifyContent: "center", // center vertically
+        alignItems: "center", // center horizontally
+        fontFamily: "Arial, sans-serif",
+      }}
+    >
+      {/* Container card */}
+      <div
+        style={{
+          backgroundColor: "white",
+          color: "#1a1a1b",
+          borderRadius: 16,
+          padding: "60px 80px",
+          maxWidth: "1200px",
+          width: "90%",
+          boxShadow: "0 4px 24px rgba(0,0,0,0.2)",
+        }}
+      >
+        {/* Top bar: avatar + subreddit + timestamp */}
+        <div style={{ display: "flex", alignItems: "center", marginBottom: 24 }}>
+          <img
+            src={staticFile("images/avatar.png")}
+            style={{
+              width: 60,
+              height: 60,
+              borderRadius: "50%",
+              marginRight: 18,
+            }}
+          />
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <span
+              style={{
+                fontSize: 32,
+                fontWeight: 600,
+                color: "#1a1a1b",
+              }}
+            >
+              r/AskReddit
+            </span>
+            <span
+              style={{
+                fontSize: 22,
+                color: "#787c7e",
+              }}
+            >
+              10 hrs ago
+            </span>
+          </div>
+        </div>
+
+        {/* Title */}
+        <h1
+          style={{
+            fontSize: 48,
+            fontWeight: 700,
+            margin: "20px 0",
+            lineHeight: 1.4,
+          }}
+        >
+          {title.trim()}
+        </h1>
+
+        {/* Text */}
+        <p
+          style={{
+            fontSize: 28,
+            lineHeight: 1.8,
+            color: "#1a1a1b",
+          }}
+        >
+          {text}
+        </p>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// ------------------ SentenceBuilder stays same ------------------
 type Word = { word: string; start: number; end: number };
 
 const SentenceBuilder: React.FC<{
@@ -49,7 +141,7 @@ const SentenceBuilder: React.FC<{
   fps: number;
 }> = ({ words, fps }) => {
   const frame = useCurrentFrame();
-  
+
   const wordsPerLine = 8;
   const lines: Word[][] = [];
   for (let i = 0; i < words.length; i += wordsPerLine) {

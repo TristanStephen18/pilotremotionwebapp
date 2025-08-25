@@ -1,211 +1,103 @@
 {
-  "story": "Gigil ako ko. This girl is posting beauty products but nag po post siya ng after na naka filter and remini",
-  "duration": 6.582813,
+  "story": "Ayun lang. Nag private na. Hahahaah tinablan na ng bashing",
+  "duration": 4.54525,
   "words": [
     {
-      "word": "Gigil",
-      "start": 0.219,
-      "end": 0.5
+      "word": "Ayun",
+      "start": 0.099,
+      "end": 0.319
     },
     {
       "word": " ",
-      "start": 0.5,
-      "end": 0.519
+      "start": 0.319,
+      "end": 0.359
     },
     {
-      "word": "ako",
-      "start": 0.519,
-      "end": 0.699
-    },
-    {
-      "word": " ",
-      "start": 0.699,
-      "end": 0.719
-    },
-    {
-      "word": "ko.",
-      "start": 0.719,
-      "end": 0.919
+      "word": "lang.",
+      "start": 0.359,
+      "end": 0.579
     },
     {
       "word": " ",
-      "start": 0.919,
-      "end": 1.379
+      "start": 0.579,
+      "end": 0.859
     },
     {
-      "word": "This",
-      "start": 1.379,
-      "end": 1.539
+      "word": "Nag",
+      "start": 0.859,
+      "end": 0.979
     },
     {
       "word": " ",
-      "start": 1.539,
+      "start": 0.979,
+      "end": 1.039
+    },
+    {
+      "word": "private",
+      "start": 1.039,
+      "end": 1.399
+    },
+    {
+      "word": " ",
+      "start": 1.399,
+      "end": 1.439
+    },
+    {
+      "word": "na.",
+      "start": 1.439,
       "end": 1.579
     },
     {
-      "word": "girl",
+      "word": " ",
       "start": 1.579,
-      "end": 1.799
+      "end": 2.139
+    },
+    {
+      "word": "Hahahaah",
+      "start": 2.139,
+      "end": 3
     },
     {
       "word": " ",
-      "start": 1.799,
-      "end": 1.86
+      "start": 3,
+      "end": 3.079
     },
     {
-      "word": "is",
-      "start": 1.86,
-      "end": 2
-    },
-    {
-      "word": " ",
-      "start": 2,
-      "end": 2.039
-    },
-    {
-      "word": "posting",
-      "start": 2.039,
-      "end": 2.439
+      "word": "tinablan",
+      "start": 3.079,
+      "end": 3.48
     },
     {
       "word": " ",
-      "start": 2.439,
-      "end": 2.48
-    },
-    {
-      "word": "beauty",
-      "start": 2.48,
-      "end": 2.7
-    },
-    {
-      "word": " ",
-      "start": 2.7,
-      "end": 2.779
-    },
-    {
-      "word": "products",
-      "start": 2.779,
-      "end": 3.299
-    },
-    {
-      "word": " ",
-      "start": 3.299,
-      "end": 3.319
-    },
-    {
-      "word": "but",
-      "start": 3.319,
-      "end": 3.439
-    },
-    {
-      "word": " ",
-      "start": 3.439,
-      "end": 3.46
-    },
-    {
-      "word": "nag",
-      "start": 3.46,
+      "start": 3.48,
       "end": 3.639
     },
     {
-      "word": " ",
+      "word": "na",
       "start": 3.639,
       "end": 3.659
     },
     {
-      "word": "po",
+      "word": " ",
       "start": 3.659,
-      "end": 3.819
-    },
-    {
-      "word": " ",
-      "start": 3.819,
-      "end": 3.859
-    },
-    {
-      "word": "post",
-      "start": 3.859,
-      "end": 4.079
-    },
-    {
-      "word": " ",
-      "start": 4.079,
-      "end": 4.119
-    },
-    {
-      "word": "siya",
-      "start": 4.119,
-      "end": 4.239
-    },
-    {
-      "word": " ",
-      "start": 4.239,
-      "end": 4.279
+      "end": 3.6599999999999997
     },
     {
       "word": "ng",
-      "start": 4.279,
-      "end": 4.44
+      "start": 3.6599999999999997,
+      "end": 3.74
     },
     {
       "word": " ",
-      "start": 4.44,
+      "start": 3.74,
+      "end": 3.799
+    },
+    {
+      "word": "bashing",
+      "start": 3.799,
       "end": 4.519
-    },
-    {
-      "word": "after",
-      "start": 4.519,
-      "end": 4.779
-    },
-    {
-      "word": " ",
-      "start": 4.779,
-      "end": 4.819
-    },
-    {
-      "word": "na",
-      "start": 4.819,
-      "end": 4.9
-    },
-    {
-      "word": " ",
-      "start": 4.9,
-      "end": 4.94
-    },
-    {
-      "word": "naka",
-      "start": 4.94,
-      "end": 5.099
-    },
-    {
-      "word": " ",
-      "start": 5.099,
-      "end": 5.199
-    },
-    {
-      "word": "filter",
-      "start": 5.199,
-      "end": 5.619
-    },
-    {
-      "word": " ",
-      "start": 5.619,
-      "end": 5.639
-    },
-    {
-      "word": "and",
-      "start": 5.639,
-      "end": 5.739
-    },
-    {
-      "word": " ",
-      "start": 5.739,
-      "end": 5.799
-    },
-    {
-      "word": "remini",
-      "start": 5.799,
-      "end": 6.559
     }
-  ]
+  ],
+  "title": "Ayun lang. Nag private na.",
+  "text": "Hahahaah tinablan na ng bashing"
 }
