@@ -475,6 +475,7 @@ app.post(
 );
 
 app.get("/api/reddit", async (req, res) => {
+  console.log("🔍 Received Reddit fetch request");
   try {
     const { url } = req.query;
     if (!url || typeof url !== "string") {
@@ -484,9 +485,11 @@ app.get("/api/reddit", async (req, res) => {
     const cleanUrl = url.split("?")[0];
     const jsonUrl = cleanUrl.endsWith(".json") ? cleanUrl : cleanUrl + ".json";
 
+    console.log("Fetching Reddit JSON:", jsonUrl);
     const redditRes = await fetch(jsonUrl, {
-      headers: { "User-Agent": "RedditVideoApp/1.0" }, // Reddit requires UA
+      headers: { "User-Agent": "RedditVideoApp/1.0 by u/yourredditusername" },
     });
+    console.log("Reddit status:", redditRes.status, redditRes.statusText);
 
     if (!redditRes.ok) {
       return res
