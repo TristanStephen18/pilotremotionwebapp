@@ -22,6 +22,7 @@ export const MyVideo: React.FC<{backgroundVideo: string}> = ({backgroundVideo}) 
       <Video
         src={staticFile(backgroundVideo)}
         muted
+        loop
         style={{
           position: "absolute",
           width: "100%",

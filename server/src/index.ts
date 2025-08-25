@@ -510,7 +510,6 @@ app.get("/api/reddit", async (req, res) => {
 
 app.use(express.static(__dirname));
 
-// fetchAudio("hehehehehehehehehehehehehehehe", "CwhRBWXzGAHq8TQ4Fs17", "StoryTellingVideo");
 
 app.listen(5000, () => {
   console.log("🚀 Server running at http://localhost:5000");
